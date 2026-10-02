@@ -21,10 +21,8 @@ spec:
     spec:
       containers:
       - name: lesson-api
-        image: hashicorp/http-echo:0.2.3
-        args:
-        - "-text=Lesson Service v1 - Curriculum & Progress"
-        - "-listen=:8080"
+        image: hammadnmt/lesson-service:0.0.1
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         env:

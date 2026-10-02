@@ -21,10 +21,8 @@ spec:
     spec:
       containers:
       - name: media-api
-        image: hashicorp/http-echo:0.2.3
-        args:
-        - "-text=Media Service v1 - Video Streaming & Assets"
-        - "-listen=:8080"
+        image: hammadnmt/media-service:0.0.1
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         resources:

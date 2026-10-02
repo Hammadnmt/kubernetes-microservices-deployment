@@ -21,10 +21,8 @@ spec:
     spec:
       containers:
       - name: user-api
-        image: hashicorp/http-echo:0.2.3
-        args:
-        - "-text=User Service v1 - Handling Authentication & Profiles"
-        - "-listen=:8080"
+        image: hammadnmt/user-service:0.0.1
+        imagePullPolicy: IfNotPresent   
         ports:
         - containerPort: 8080
         resources:
