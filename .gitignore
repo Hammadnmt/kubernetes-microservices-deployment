@@ -1,9 +1,8 @@
-# Local lab exercises & source apps (kept locally, not pushed to remote)
+# Local lab exercises (kept locally, not pushed to remote)
 01-pods-and-cli/
 02-deployments/
 03-services/
 04-combined-app/
-apps/
 
 # macOS
 .DS_Store

@@ -7,12 +7,19 @@ Declarative Kubernetes manifests for deploying an independent, scalable 4-tier m
 ## Architecture Overview
 
 ```text
-services/
+apps/                       # Go microservices source code & multi-stage Dockerfiles
+├── user-service/           # User authentication & profiles (~15MB image)
+├── inventory-service/      # Stock & availability
+├── media-service/          # Video streaming & assets
+└── lesson-service/         # Microservice orchestrator (aggregates data via cluster DNS)
+
+services/                   # Declarative Kubernetes manifests (Deployments & Services)
 ├── user-service.yaml       # User authentication & profiles (3 replicas)
 ├── inventory-service.yaml  # Stock & availability (2 replicas)
 ├── media-service.yaml      # Video streaming & assets (3 replicas)
 └── lesson-service.yaml     # Course curriculum & progress (2 replicas)
 ```
+
 
 Each service is decoupled with its own:
 - **Deployment**: Horizontal replicas, container specifications, resource limits & requests.
