@@ -1,0 +1,51 @@
+# ===================================================================
+# Inventory Service: Manages catalog, stock, and course availability
+# ===================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-deploy
+  labels:
+    app: inventory-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inventory-service
+  template:
+    metadata:
+      labels:
+        app: inventory-service
+        tier: backend
+    spec:
+      containers:
+      - name: inventory-api
+        image: hashicorp/http-echo:0.2.3
+        args:
+        - "-text=Inventory Service v1 - Managing Stock & Availability"
+        - "-listen=:8080"
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service
+  labels:
+    app: inventory-service
+spec:
+  type: ClusterIP
+  selector:
+    app: inventory-service
+  ports:
+  - port: 80
+    targetPort: 8080

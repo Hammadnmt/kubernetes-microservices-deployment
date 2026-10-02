@@ -1,0 +1,20 @@
+# Local lab exercises (kept locally, not pushed to remote)
+01-pods-and-cli/
+02-deployments/
+03-services/
+04-combined-app/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor & IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary logs & scratch
+*.log
+scratch/

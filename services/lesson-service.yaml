@@ -1,0 +1,59 @@
+# ===================================================================
+# Lesson Service: Course curriculum, modules, and progress tracking
+# ===================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lesson-deploy
+  labels:
+    app: lesson-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lesson-service
+  template:
+    metadata:
+      labels:
+        app: lesson-service
+        tier: backend
+    spec:
+      containers:
+      - name: lesson-api
+        image: hashicorp/http-echo:0.2.3
+        args:
+        - "-text=Lesson Service v1 - Curriculum & Progress"
+        - "-listen=:8080"
+        ports:
+        - containerPort: 8080
+        env:
+        # Internal DNS service discovery URLs:
+        - name: USER_SERVICE_URL
+          value: "http://user-service"
+        - name: MEDIA_SERVICE_URL
+          value: "http://media-service"
+        - name: INVENTORY_SERVICE_URL
+          value: "http://inventory-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lesson-service
+  labels:
+    app: lesson-service
+spec:
+  type: ClusterIP
+  selector:
+    app: lesson-service
+  ports:
+  - port: 80
+    targetPort: 8080

@@ -1,0 +1,51 @@
+# ===================================================================
+# Media Service: Manages video streaming, thumbnails, and uploads
+# ===================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-deploy
+  labels:
+    app: media-service
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: media-service
+  template:
+    metadata:
+      labels:
+        app: media-service
+        tier: backend
+    spec:
+      containers:
+      - name: media-api
+        image: hashicorp/http-echo:0.2.3
+        args:
+        - "-text=Media Service v1 - Video Streaming & Assets"
+        - "-listen=:8080"
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "150m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-service
+  labels:
+    app: media-service
+spec:
+  type: ClusterIP
+  selector:
+    app: media-service
+  ports:
+  - port: 80
+    targetPort: 8080
