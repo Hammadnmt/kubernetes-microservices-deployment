@@ -1,0 +1,117 @@
+# ===================================================================
+# Production Environment Manifests
+# Target Namespace: production
+# High Availability: 3 replicas for user-service, 2 for lesson-service
+# ===================================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deploy
+  namespace: production
+  labels:
+    app: user-service
+    env: prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-service
+      env: prod
+  template:
+    metadata:
+      labels:
+        app: user-service
+        env: prod
+    spec:
+      containers:
+      - name: user-api
+        image: hammadnmt/user-service:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: production
+  labels:
+    app: user-service
+    env: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: user-service
+    env: prod
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lesson-deploy
+  namespace: production
+  labels:
+    app: lesson-service
+    env: prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lesson-service
+      env: prod
+  template:
+    metadata:
+      labels:
+        app: lesson-service
+        env: prod
+    spec:
+      containers:
+      - name: lesson-api
+        image: hammadnmt/lesson-service:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        # Resolves to user-service inside the 'production' namespace automatically:
+        - name: USER_SERVICE_URL
+          value: "http://user-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lesson-service
+  namespace: production
+  labels:
+    app: lesson-service
+    env: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: lesson-service
+    env: prod
+  ports:
+  - port: 80
+    targetPort: 8080

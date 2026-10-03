@@ -1,0 +1,24 @@
+# ===================================================================
+# Module 05: Namespaces (Virtual Environments)
+# Declarative definitions for Development and Production environments
+# ===================================================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: development
+  labels:
+    environment: dev
+    team: backend
+    owner: hammad
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    environment: prod
+    team: backend
+    owner: hammad

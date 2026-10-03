@@ -1,0 +1,136 @@
+# ===================================================================
+# Development Environment Manifests
+# Target Namespace: development
+# Lightweight: 1 replica per service
+# ===================================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deploy
+  namespace: development
+  labels:
+    app: user-service
+    env: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: user-service
+        env: dev
+    spec:
+      containers:
+      - name: user-api
+        image: hammadnmt/user-service:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: development
+  labels:
+    app: user-service
+    env: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: user-service
+    env: dev
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lesson-deploy
+  namespace: development
+  labels:
+    app: lesson-service
+    env: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lesson-service
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: lesson-service
+        env: dev
+    spec:
+      containers:
+      - name: lesson-api
+        image: hammadnmt/lesson-service:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        # Resolves to user-service inside the 'development' namespace automatically:
+        - name: USER_SERVICE_URL
+          value: "http://user-service"
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lesson-service
+  namespace: development
+  labels:
+    app: lesson-service
+    env: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: lesson-service
+    env: dev
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+
+# ===================================================================
+# Resource Quota: Caps total resources for the development namespace
+# ===================================================================
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: dev-quota
+  namespace: development
+spec:
+  hard:
+    pods: "3"
+    requests.cpu: "200m"
+    requests.memory: "200Mi"
+    limits.cpu: "400m"
+    limits.memory: "400Mi"
+
