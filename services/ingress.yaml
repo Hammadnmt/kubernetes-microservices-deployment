@@ -1,0 +1,50 @@
+# ===================================================================
+# Microservices Ingress: Single gateway entry point for all services
+# ===================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  labels:
+    tier: gateway
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: myapp.local
+    http:
+      paths:
+      # 1. User Service
+      - path: /api/users
+        pathType: Prefix
+        backend:
+          service:
+            name: user-service
+            port:
+              number: 80
+
+      # 2. Inventory Service
+      - path: /api/inventory
+        pathType: Prefix
+        backend:
+          service:
+            name: inventory-service
+            port:
+              number: 80
+
+      # 3. Media Service
+      - path: /api/media
+        pathType: Prefix
+        backend:
+          service:
+            name: media-service
+            port:
+              number: 80
+
+      # 4. Lesson Service (Orchestrator)
+      - path: /api/lessons
+        pathType: Prefix
+        backend:
+          service:
+            name: lesson-service
+            port:
+              number: 80
